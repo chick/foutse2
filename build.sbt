@@ -1,4 +1,4 @@
-name := "chisel-module-template"
+name := "foutse-circuit"
 
 version := "1.0"
 
