@@ -31,6 +31,7 @@ object HashFunction {
   }
 
 
+  //noinspection ScalaStyle
   //To test my code
   def main(args: Array[String]): Unit = {
     val n = 5
@@ -41,7 +42,6 @@ object HashFunction {
     // I generate a random vector
     val x = Seq.fill(n)(Random.nextDouble).toArray
     println("Given x = \n" + x.mkString(" "))
-    //println("The hash value is\n" +  hashfunc(x, args(0).toDouble, args(1).toDouble, tabHash(args(2).toInt,args(3).toInt)))
     println("The hash value is\n" + hashfunc(x, w, b, tabHash(p, m)))
 
   }

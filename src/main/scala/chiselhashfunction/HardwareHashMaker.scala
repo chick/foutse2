@@ -38,7 +38,7 @@ class HashMaker(keySize: Int, tableRows: Int, w: Double, b: Double, weights: Arr
 
 /**
    * This is a simple hardware version of the above HashMaker
-   */ 
+   */
 class HardwareHashMaker(val fixedType: FixedPoint,
                         val keySize: Int,
                         val hashDepth: Int,
@@ -58,6 +58,7 @@ class HardwareHashMaker(val fixedType: FixedPoint,
     case KnownBinaryPoint(n) => n + shiftDivider + 4
     case _ => throw new Exception(s"binary point of fixedPoint for HashFunction must be known")
   }
+  //noinspection ScalaStyle
   println(s"Shift divider $shiftDivider newBinaryPoint $newBinaryPoint")
 
   // create a hashDepth X keySize table of random numbers with a gaussian distribution
@@ -76,5 +77,4 @@ class HardwareHashMaker(val fixedType: FixedPoint,
   }
 
   io.out := intermediateSums.reduce(_ + _)
-
 }

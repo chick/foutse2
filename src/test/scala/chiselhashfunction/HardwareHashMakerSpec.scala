@@ -2,34 +2,35 @@
 
 package chiselhashfunction
 
+import chisel3._
 import chisel3.experimental.FixedPoint
+import chisel3.internal.firrtl.KnownBinaryPoint
 import chisel3.iotesters.PeekPokeTester
 import chisel3.{iotesters, _}
-import chiselHashFunctiontion.HashFunction
 import org.scalatest.{FreeSpec, Matchers}
 
 import scala.util.Random
 
-class HashFunctionTester(c: HashFunction) extends PeekPokeTester(c) {
+class HardwareHashMakerTester(c: HardwareHashMaker) extends PeekPokeTester(c) {
 //  def pokeFixedPoint(signal: FixedPoint, value: Double): Unit = {
-  //    val bigInt = value.F(signal.binaryPoint).litValue()
-  //    poke(signal, bigInt)
-  //  }
-  //  def peekFixedPoint(signal: FixedPoint): Double = {
-  //    val bigInt = peek(signal)
-  //    signal.binaryPoint match {
-  //      case KnownBinaryPoint(bp) => FixedPoint.toDouble(bigInt, bp)
-  //      case _ => throw new Exception("Cannot peekFixedPoint with unknown binary point location")
-  //    }
-  //  }
+//    val bigInt = value.F(signal.binaryPoint).litValue()
+//    poke(signal, bigInt)
+//  }
+//  def peekFixedPoint(signal: FixedPoint): Double = {
+//    val bigInt = peek(signal)
+//    signal.binaryPoint match {
+//      case KnownBinaryPoint(bp) => FixedPoint.toDouble(bigInt, bp)
+//      case _ => throw new Exception("Cannot peekFixedPoint with unknown binary point location")
+//    }
+//  }
 
-//  val hashMaker = new scalahashfunction.HashFunction(c.keySize, c.keySize, c.w, c.b, c.weights)
+  val hashMaker = new HashMaker(c.keySize, c.hashDepth, c.w, c.b, c.weights)
 
   def oneTest(key: Array[Double]) {
     key.zipWithIndex.foreach { case (v, i) => pokeFixedPoint(c.io.x(i), v) }
     step(1)
 
-//    println(f"hash of (${key.mkString(",")}) is ${peekFixedPoint(c.io.out)}%20.10f scala says ${hashMaker(key)}%20.10f")
+    println(f"hash of (${key.mkString(",")}) is ${peekFixedPoint(c.io.out)}%20.10f scala says ${hashMaker(key)}%20.10f")
   }
 
   oneTest(Array.fill(c.keySize)(0.0))
@@ -37,7 +38,7 @@ class HashFunctionTester(c: HashFunction) extends PeekPokeTester(c) {
   oneTest(Array.fill(c.keySize)(1.0))
 }
 
-class HashFunctionSpec extends FreeSpec with Matchers {
+class HardwareHashMakerSpec extends FreeSpec with Matchers {
   Random.setSeed(0L)
 
   def weightGenerator(rows: Int, cols: Int, makeDouble: () => Double): Array[Array[Double]] = {
@@ -57,9 +58,9 @@ class HashFunctionSpec extends FreeSpec with Matchers {
 
     iotesters.Driver.execute(
       Array.empty[String],
-      () => new HashFunction(keySize, FixedPoint(fixedWidth.W, binaryPoint.BP))
+      () => new HardwareHashMaker(FixedPoint(fixedWidth.W, binaryPoint.BP), keySize, hashDepth, w, b, weights)
     ) { c =>
-      new HashFunctionTester(c)
+      new HardwareHashMakerTester(c)
     }
   }
 

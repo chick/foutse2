@@ -12,9 +12,7 @@ import chisel3.experimental.FixedPoint
 
 /**
    * calculating the The square distance of two vectors v1 and v2
-   */ 
-
-
+   */
 object GenFIR {
 	def apply[T <: Data with Num[T]](v1: Vec[T], v2: Vec[T]): T = {
 		val tmp = (v1 zip v2).map { case (x,y) =>(y-x)*(y-x) }
@@ -22,14 +20,14 @@ object GenFIR {
 	}
 }
 
-class sqdist(val n:Int,val fixedType: FixedPoint)  extends Module {
+class SqDist(val n:Int, val fixedType: FixedPoint)  extends Module {
 	val io = IO(new Bundle {
 		val in1  = Input(Vec(n,fixedType))
     		val in2  = Input(Vec(n,fixedType))
 		val out = Output(fixedType)
-    		
+
   	})
-	
+
 
 	io.out := GenFIR(io.in1,io.in2)
 
@@ -39,7 +37,7 @@ object sqdistDriver extends App {
 val fixedWidth = 64
   val binaryPoint = 32
   val n = 5
-  chisel3.Driver.execute(args, () => new sqdist (n,FixedPoint(fixedWidth.W, binaryPoint.BP)))
+  chisel3.Driver.execute(args, () => new SqDist (n,FixedPoint(fixedWidth.W, binaryPoint.BP)))
 }
 
 

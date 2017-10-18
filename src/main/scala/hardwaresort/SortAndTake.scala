@@ -22,7 +22,7 @@ import chisel3.util.log2Ceil
   * @param fixedType   Size of FixedPointer numbers in input
   * @param reverseSort returns lowest sorted values when false, highest sorted values when true
   */
-class SortAndTake(val inputSize: Int, val outputSize: Int, fixedType: FixedPoint, reverseSort: Boolean = false)
+class SortAndTake(val inputSize: Int, val outputSize: Int, val fixedType: FixedPoint, val reverseSort: Boolean = false)
   extends Module {
   val io = IO(new Bundle {
     val inputs    = Input(Vec(inputSize, fixedType))
@@ -48,7 +48,7 @@ class SortAndTake(val inputSize: Int, val outputSize: Int, fixedType: FixedPoint
       isEvenCycle := ! isEvenCycle
 
       sortCounter := sortCounter + 1.U
-      when(sortCounter > inputSize.U) {
+      when(sortCounter >= inputSize.U) {
         busy := false.B
       }
 
@@ -88,17 +88,17 @@ class SortAndTake(val inputSize: Int, val outputSize: Int, fixedType: FixedPoint
 
 class SortTester(c: SortAndTake) extends PeekPokeTester(c) {
 
-  def pokeFixedPoint(signal: FixedPoint, value: Double): Unit = {
-    val bigInt = value.F(signal.binaryPoint).litValue()
-    poke(signal, bigInt)
-  }
-  def peekFixedPoint(signal: FixedPoint): Double = {
-    val bigInt = peek(signal)
-    signal.binaryPoint match {
-      case KnownBinaryPoint(bp) => FixedPoint.toDouble(bigInt, bp)
-      case _ => throw new Exception("Cannot peekFixedPoint with unknown binary point location")
-    }
-  }
+//  def pokeFixedPoint(signal: FixedPoint, value: Double): Unit = {
+//    val bigInt = value.F(signal.binaryPoint).litValue()
+//    poke(signal, bigInt)
+//  }
+//  def peekFixedPoint(signal: FixedPoint): Double = {
+//    val bigInt = peek(signal)
+//    signal.binaryPoint match {
+//      case KnownBinaryPoint(bp) => FixedPoint.toDouble(bigInt, bp)
+//      case _ => throw new Exception("Cannot peekFixedPoint with unknown binary point location")
+//    }
+//  }
 
   def showOutputs(): Unit = {
     for(i <- 0 until c.outputSize) {
