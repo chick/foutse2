@@ -20,18 +20,6 @@ object SquareDistance {
 }
 
 class SquareDistanceHardwareTester(c: SqDist) extends PeekPokeTester(c) {
-  def pokeFixedPoint(signal: FixedPoint, value: Double): Unit = {
-    val bigInt = value.F(signal.binaryPoint).litValue()
-    poke(signal, bigInt)
-  }
-  def peekFixedPoint(signal: FixedPoint): Double = {
-    val bigInt = peek(signal)
-    signal.binaryPoint match {
-      case KnownBinaryPoint(bp) => FixedPoint.toDouble(bigInt, bp)
-      case _ => throw new Exception("Cannot peekFixedPoint with unknown binary point location")
-    }
-  }
-
   for(trial <- 0 to 20) {
 
     val v1 = Seq.tabulate(10) { x => Random.nextDouble() }
