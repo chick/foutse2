@@ -61,6 +61,8 @@ class HardwareNearestNeighbours(val fixedType: FixedPoint,
     sorter.io.newInputs := true.B
     busy := true.B
   }.elsewhen(busy && ! io.dataLoaded) {
+    sorter.io.newInputs := false.B
+
     when(sorter.io.sortDone) {
       busy := false.B
     }
